@@ -58,7 +58,9 @@ if __name__=='__main__':
 	
 	print("\nLoop all sub objects...\n")
 	
-		print('items=%s\n' % child.items())
-		print('keys=%s\n' % child.keys())
-		getChildObjects(child)
+	for child in root:
+		if False == isParameter(child):
+			print('items=%s\n' % child.items())
+			print('keys=%s\n' % child.keys())
+			getChildObjects(child)
 
