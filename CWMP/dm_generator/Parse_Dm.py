@@ -45,7 +45,10 @@ def getChildObjects(Child):
 		print('subChildName=%s' % subChild.tag, 'Type=%s' % subChild.get('type'), 'isParameter=%s'%isParameter(subChild))
 		print('items=%s\n' % subChild.items())
 		print('keys=%s\n' % subChild.keys())
-	
+		
+		if False == isParameter(subChild):
+			print('##### start of Child %s #####\n' % subChild.tag)
+			getChildObjects(subChild)
 	
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
