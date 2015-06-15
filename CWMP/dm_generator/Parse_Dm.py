@@ -43,6 +43,11 @@ def getALLRootChildObject(_root_):
 def getChildObjects(Child):
 	for subChild in Child:
 		print('subChildName=%s' % subChild.tag, 'Type=%s' % subChild.get('type'), 'isParameter=%s'%isParameter(subChild))
+		#print('items=%s\n' % subChild.items())
+		#print('keys=%s\n' % subChild.keys())
+		if False == isParameter(subChild):
+			print('##### start of Child %s #####\n' % subChild.tag)
+		getChildObjects(subChild)
 	
 	
 if __name__=='__main__':
@@ -52,9 +57,17 @@ if __name__=='__main__':
 	if not root:  # careful!
 		print("Error: Invalid xml file, root not found!\n")
 		
+	print("\nRoot objects...\n")	
 	getALLRootChildObject(root)	
 	
 	print("\nLoop all sub objects...\n")
-	
-	getChildObjects(root)
+	NextLevelObjList = list(root)
+	for child in NextLevelObjList:
+		if False == isParameter(child):
+			print('##### start of Child %s #####\n' % child.tag)
+			print('subChildName=%s' % child.tag, 'Type=%s' % child.get('type'), 'isParameter=%s'%isParameter(child))
+			#print('items=%s\n' % child.items())
+			#print('keys=%s\n' % child.keys())
+			getChildObjects(child)
+			print('##### End of Child %s #####\n' % child.tag)
 
