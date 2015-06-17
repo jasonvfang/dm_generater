@@ -1,4 +1,5 @@
 #coding=utf-8
+
 import os, sys
 import xml.etree.ElementTree as ET
 from string import Template
@@ -41,17 +42,16 @@ def getALLRootChildObject(_root_):
 		print('ChildName=%s' % child.tag, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))
 
 def getChildObjects(Child):
-	print('subChildName=%s' % Child.tag, 'Type=%s' % Child.get('type'))
+	#print('subChildName=%s' % Child.tag, 'Type=%s' % Child.get('type'))
 	for subChild in Child:
 		#print('objName=%s' % subChild.tag, 'Type=%s' % subChild.get('type'), 'isParameter=%s'%isParameter(subChild))
 		#print('items=%s\n' % subChild.items())
 		#print('keys=%s\n' % subChild.keys())
 		
-		if False == isParameter(subChild):
-			print('Sub child parameters')
+		if False == isParameter(subChild):			
 			getChildObjects(subChild)
 		else:
-			print('SubChildName=%s\n' % subChild.tag)
+			print('SubParaName=%s' % subChild.tag)
 	
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
@@ -66,12 +66,12 @@ if __name__=='__main__':
 	
 	for child in root:	
 		if False == isParameter(child):
-			print('name=%s\n' % child.tag)
+			print('name=%s' % child.tag)
 			#print('items=%s\n' % child.items())
 			#print('keys=%s\n' % child.keys())
 			getChildObjects(child)
 		else:
-			print('Sub parameters:')
-			print('ChildName=%s' % child.tag, 'Type=%s' % child.get('type'))
+			#print('Sub parameters:')
+			print('RootChildName=%s' % child.tag, 'Type=%s' % child.get('type'))
 			
 
