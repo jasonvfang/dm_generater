@@ -13,7 +13,7 @@ PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList',
 XML_OBJ_TYPES = ['Object', 'MultiObject', 'Parameter', 'Instance']
 VALUE_TYPES = ('Unsigned', 'dateTime', 'String', 'Int', 'Bool')
 OBJNAME_HEAD_TAG='IGD'
-DM_OBJ_HEAD_FILE = 'DMObjStructHead.c'
+DM_OBJ_HEAD_FILE = 'dm_objects_tb.c'
 
 AUTO_GEN_PROMPT_STR = '/*\n\
 ** Auto generation file. \n\
@@ -26,19 +26,19 @@ DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
 
 DMOBJ_PARAMETER_TEMPLATE_STR_BODY = '\
 \t{\n\
-\t\t\'$TagName\', \n\
-\t\t$access,\n\
-\t\t$value_type,\n\
-\t\t$notification,\n\
+\t\t\"$TagName\", \n\
+\t\t\"$access\",\n\
+\t\t\"$value_type\",\n\
+\t\t\"$notification\",\n\
 \t},\n'
 
 DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
 {\n\
-\t\'$TagName\', \n\
+\t\"$TagName\", \n\
 \t$NumOfChildParameters,\n\
 \t$NumOfChildObjects,\n\
 \tNULL,\n\
-\t&$ChildParas\n\
+\t$ChildParas\n\
 };\n'
 
 def isObject(x):
@@ -102,7 +102,7 @@ def getRootXmlObject(dmFile):
 
 
 def getDMObject(_Obj_):
-	#print("RootNumOfChild:%d" % len(_Obj_))
+	#print("ObjNumOfChild:%d" % len(_Obj_))
 	NumOfChild = len(_Obj_)
 	NumOfParas = 0
 	name = _Obj_.tag
@@ -115,29 +115,29 @@ def getDMObject(_Obj_):
 			ChildParamList.append(tmpParamObj)
 			print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 	
-	if len(ChildParamList) == 0:
-		ChildParamList = None
+	print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
+	#if len(ChildParamList) == 0:
+	#	ChildParamList = None
 	
 	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
 	return tmpDMObj
 	
 	
 def writeDMObjects(file_object, tmpRootObj):
-	if tmpRootObj and file_object:
-		
+	if tmpRootObj and file_object:		
 		#Write Obj parameters firstly 
 		if len(tmpRootObj.childParams) > 0:
 			strParas = genTempDMParams(tmpRootObj)
-			print('%s'%strParas)
+			#print('%s'%strParas)
 			writeFileLinesContent(file_object, strParas)
 			
 		strbuf = genTempDMObj(tmpRootObj)
 
 		if strbuf:
-			print("strbuf:%s" % strbuf)
+			#print("strbuf:%s" % strbuf)
 			writeFileLinesContent(file_object, strbuf)
 		else:
-			print('Root Gen failed, exit...')
+			print('Obj Gen failed, exit...')
 			file_object.close()	
 			sys.exit(1)	
 			
