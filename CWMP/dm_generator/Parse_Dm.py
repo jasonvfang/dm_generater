@@ -1,11 +1,12 @@
+#!/usr/bin/env python
 #coding=utf-8
 
-import os, sys, string
+import os, sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from string import Template
 
-DATA_MODEL_XML_FILE = 'data_model_tmp_Single.xml'
+DATA_MODEL_XML_FILE = ''
 
 #global definition for data model object elements
 PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList', 'style', 'defaultValue']
@@ -226,12 +227,22 @@ def fetchWriteChildObjects(Child, file_object):
 		tmpChildDMObj = getDMObject(Child)		
 		writeDMObjects(file_object, tmpChildDMObj)	
 
+def Usage():
+	print('Usage:')
+	print('\t./Parse_DM.py -h | --help')
+	print('\t./Parse_DM.py XXX.xml\n')
+	
+	
 if __name__=='__main__':
 	#print("Parse xml to generate codes...\n")
-	
+	if (len(sys.argv) != 2) or sys.argv[1] in ('-h', '--help'):
+		Usage()
+		sys.exit(1)
+		
+	DATA_MODEL_XML_FILE = sys.argv[1]	
 	root = getRootXmlObject(DATA_MODEL_XML_FILE)
 	
-	file_object = open(DM_OBJ_HEAD_FILE, 'w+')
+	file_object = open(DM_OBJ_HEAD_FILE, 'w+')			
 	writeFileLinesContent(file_object, AUTO_GEN_PROMPT_STR)
 	writeFileLinesContent(file_object, '#include "DmObj_Struct_def.h"')
 	
