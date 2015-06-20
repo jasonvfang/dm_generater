@@ -69,18 +69,24 @@ def getRootXmlObject(dmFile):
 	return tree.getroot()
 
 
-def getALLRootChildObject(_root_):
-	#print("RootNumOfChild:%d" % len(_root_))
-	RootNumOfChild = len(_root_)
-	RootNumOfParas = 0
-	name = _root_.tag
+def getDMObject(_Obj_):
+	#print("RootNumOfChild:%d" % len(_Obj_))
+	NumOfChild = len(_Obj_)
+	NumOfParas = 0
+	name = _Obj_.tag
+	ChildParamList = []
 	
-	for child in _root_:
+	for child in _Obj_:
 		if True == isParameter(child):
-			RootNumOfParas += 1
-		print('ChildName=%s' % child.tag, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))
+			NumOfParas += 1
+			tmpParamObj = DMObj.cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
+			ChildParamList.append(tmpParamObj)
+			print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 	
-	rootObj = DMObj.cDMObj(name, RootNumOfChild, RootNumOfParas, 0)
+	if len(ChildParamList) == 0:
+		ChildParamList = None
+	
+	rootObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
 	
 	return rootObj
 	
@@ -98,6 +104,20 @@ def getChildObjects(Child):
 		else:
 			print('SubParaName=%s' % subChild.tag)
 	
+
+def writeDMObjects(file_object, tmpRootObj):
+	if tmpRootObj and file_object:
+		strbuf = genTempDMObj(tmpRootObj)
+
+		if strbuf:
+			print("strbuf:%s" % strbuf)
+			writeFileLinesContent(file_object, strbuf)
+		else:
+			print('Root Gen failed, exit...')
+			file_object.close()	
+			sys.exit(1)
+	
+	
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
 	
@@ -108,20 +128,10 @@ if __name__=='__main__':
 	
 	if not root:  # careful!
 		print("Error: Invalid xml file, root not found!\n")
-		
-	tmpRootObj = getALLRootChildObject(root)	
 	
-	if tmpRootObj:
-		strbuf = genTempDMObj(tmpRootObj)
-
-		if strbuf:
-			print("strbuf:%s" % strbuf)
-			writeFileLinesContent(file_object, strbuf)
-	else:
-		print('Root Gen failed, exit...')
-		file_object.close()	
-		sys.exit(1)
-		
+	tmpRootObj = getDMObject(root)
+	writeDMObjects(file_object, tmpRootObj)
+	
 	print("\nLoop all sub objects...\n")
 
 	for child in root:	
@@ -130,9 +140,9 @@ if __name__=='__main__':
 			#print('items=%s\n' % child.items())
 			#print('keys=%s\n' % child.keys())
 			getChildObjects(child)
-		#else:
+		else:
 			#print('Sub parameters:')
-			#print('RootChildParaName=%s' % child.tag)
+			print('RootChildParaName=%s' % child.tag)
 
 	file_object.close()		
 			

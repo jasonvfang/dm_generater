@@ -28,16 +28,6 @@ typedef struct _range_s
     char *StringRange;
 }DM_VAL_RANGE_S;
 
-
-typedef struct _dm_obj_
-{
-	char *name;
-	unsigned int NumOfChildParameters;
-	unsigned int NumOfChildObjects;
-	struct _dm_obj_ *ChildObjs;
-}DM_OBJ_S;
-
-
 typedef struct _dm_param_
 {
 	char *name;
@@ -51,3 +41,13 @@ typedef struct _dm_param_
 	DM_VAL_RANGE_S valueRange;
 	char accessList[64];
 }DM_PARAMETER_S;
+
+typedef struct _dm_obj_
+{
+	char *name;
+	unsigned int NumOfChildParameters;
+	unsigned int NumOfChildObjects;
+	struct _dm_obj_ *ChildObjs;
+	struct _dm_param_ *ChildParams;
+}DM_OBJ_S;
+

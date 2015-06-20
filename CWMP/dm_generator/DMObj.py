@@ -2,9 +2,9 @@
 	
 class cDMParas:
 	name           = ''
-	access         = 0
+	access         = ''
 	type           = ''
-	notification   = 0
+	notification   = ''
 	
 	def __init__(self, name, access, notification, type):
 		self.name           = name
@@ -17,13 +17,15 @@ class cDMObj:
 	name           = ''
 	numOfChildObj  = 0
 	numOfChildPara = 0
-	type           = 0
+	type           = ''
+	childParams    = None
 	
-	def __init__(self, name, numOfChildObj, numOfChildPara, type):
+	def __init__(self, name, numOfChildObj, numOfChildPara, type, childParams):
 		self.name           = name
 		self.numOfChildObj  = numOfChildObj
 		self.numOfChildPara = numOfChildPara
 		self.type           = type	
+		self.childParams	= childParams
 		
 		
 		
