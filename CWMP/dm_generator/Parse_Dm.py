@@ -82,11 +82,11 @@ def genTempDMChildObjs(pDmObj):
 		ObjBufStr = Template(DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD)
 		restr = ObjBufStr.substitute(TagName = pDmObj.name.replace('.', '_')+'ChildObjs[]')
 		
-		print('restr=%s' % restr)
+		#print('restr=%s' % restr)
 		for id in range(numOfChildObjs):
 			ObjBufStr = Template(DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY)
 			rs = ObjBufStr.substitute(TagName = pDmObj.childObjs[id].tag.replace('.', '_'))
-			print('restr=%s' % rs)
+			#print('restr=%s' % rs)
 			restr += rs
 			
 		restr += '};\n'
@@ -99,7 +99,7 @@ def genTempDMParams(pDmObj):
 	if pDmObj and pDmObj.childParams:
 		numOfChildPara = len(pDmObj.childParams)		
 		ParaBufStr = Template(DMOBJ_PARAMETER_TEMPLATE_STR_HEAD)
-		restr = ParaBufStr.substitute(TagName = pDmObj.name.replace('.', '_')+'ChidParams[]')
+		restr = ParaBufStr.substitute(TagName = pDmObj.name.replace('.', '_')+'ChildParams[]')
 		
 		#print('restr=%s' % restr)
 		for id in range(numOfChildPara):
@@ -123,7 +123,7 @@ def genTempDMObj(pDmObj):
 		if len(pDmObj.childParams) > 0:
 			ChildParamRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildParams'
 		
-		if pDmObj.numOfChildObj > 0:
+		if len(pDmObj.childObjs) > 0:
 			ChildObjsRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildObjs'
 			
 		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildObjects = ChildObjsRefTag, ChildParas = ChildParamRefTag)
