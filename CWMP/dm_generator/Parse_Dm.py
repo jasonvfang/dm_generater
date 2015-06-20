@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-import os, sys
+import os, sys, time
 import xml.etree.ElementTree as ET
-from datetime import datetime
 from string import Template
 
 DATA_MODEL_XML_FILE = ''
+ISOTIMEFORMAT='%Y/%m/%d %X'
 
 #global definition for data model object elements
 PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList', 'style', 'defaultValue']
@@ -16,8 +16,9 @@ OBJNAME_HEAD_TAG='IGD'
 DM_OBJ_HEAD_FILE = 'dm_objects_tb.c'
 
 AUTO_GEN_PROMPT_STR = '/*\n\
-** Auto generation file. \n\
-** Please Do not modify this file manually. \n\
+*** Note: This is an auto generation file. \n\
+*** Please Do not modify this file manually. \n\
+*** Gen @$TIME_NOW\n\
 */\n'
 
 DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD = '\n\nDM_OBJ_S $TagName =\n\
@@ -242,8 +243,12 @@ if __name__=='__main__':
 	DATA_MODEL_XML_FILE = sys.argv[1]	
 	root = getRootXmlObject(DATA_MODEL_XML_FILE)
 	
-	file_object = open(DM_OBJ_HEAD_FILE, 'w+')			
-	writeFileLinesContent(file_object, AUTO_GEN_PROMPT_STR)
+	file_object = open(DM_OBJ_HEAD_FILE, 'w+')	
+	
+	tmpStrPlate = Template(AUTO_GEN_PROMPT_STR)
+	restr = tmpStrPlate.substitute(TIME_NOW = time.strftime(ISOTIMEFORMAT, time.localtime()))
+		
+	writeFileLinesContent(file_object, restr)
 	writeFileLinesContent(file_object, '#include "DmObj_Struct_def.h"')
 	
 	if not root:  # careful!
