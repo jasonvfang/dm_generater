@@ -18,7 +18,7 @@ class cDMObj:
 	numOfChildObj  = 0
 	numOfChildPara = 0
 	type           = ''
-	childParams    = None
+	childParams    = []
 	
 	def __init__(self, name, numOfChildObj, numOfChildPara, type, childParams):
 		self.name           = name

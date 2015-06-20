@@ -91,7 +91,11 @@ def genTempDMParams(pDmObj):
 def genTempDMObj(pDmObj):
 	if pDmObj:		
 		ObjBufStr = Template(DMOBJ_TEMPLATE_STR)
-		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = pDmObj.name.replace('.', '_') + 'ChidParams')
+		ChildParamRefTag = 'NULL'
+		if len(pDmObj.childParams) > 0:
+			ChildParamRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChidParams'
+			
+		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = ChildParamRefTag)
 		return restr
 	else:
 		return None
