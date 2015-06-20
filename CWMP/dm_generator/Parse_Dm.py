@@ -32,7 +32,7 @@ DMOBJ_PARAMETER_TEMPLATE_STR_BODY = '\
 \t\t$notification,\n\
 \t},\n'
 
-DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $TagName =\n\
+DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
 {\n\
 \t\'$TagName\', \n\
 \t$NumOfChildParameters,\n\
@@ -73,7 +73,7 @@ def genTempDMParams(pDmObj):
 	if pDmObj and pDmObj.childParams:
 		numOfChildPara = len(pDmObj.childParams)		
 		ParaBufStr = Template(DMOBJ_PARAMETER_TEMPLATE_STR_HEAD)
-		restr = ParaBufStr.substitute(TagName = pDmObj.name+'_ChidParams[]')
+		restr = ParaBufStr.substitute(TagName = pDmObj.name.replace('.', '_')+'ChidParams[]')
 		
 		#print('restr=%s' % restr)
 		for id in range(numOfChildPara):
@@ -91,7 +91,7 @@ def genTempDMParams(pDmObj):
 def genTempDMObj(pDmObj):
 	if pDmObj:		
 		ObjBufStr = Template(DMOBJ_TEMPLATE_STR)
-		restr = ObjBufStr.substitute(TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = pDmObj.name + '_ChidParams')
+		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = pDmObj.name.replace('.', '_') + 'ChidParams')
 		return restr
 	else:
 		return None
