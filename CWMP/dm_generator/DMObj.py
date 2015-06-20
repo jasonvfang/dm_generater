@@ -19,13 +19,14 @@ class cDMObj:
 	numOfChildPara = 0
 	type           = ''
 	childParams    = []
+	childObjs      = []
 	
-	def __init__(self, name, numOfChildObj, numOfChildPara, type, childParams):
+	def __init__(self, name, numOfChildObj, numOfChildPara, type, childParams, childObjs):
 		self.name           = name
 		self.numOfChildObj  = numOfChildObj
 		self.numOfChildPara = numOfChildPara
 		self.type           = type	
 		self.childParams	= childParams
-		
+		self.childObjs		= childObjs
 		
 		

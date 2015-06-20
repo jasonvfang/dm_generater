@@ -20,6 +20,13 @@ AUTO_GEN_PROMPT_STR = '/*\n\
 ** Please Do not modify this file manually. \n\
 */\n'
 
+DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD = '\n\nDM_OBJ_S $TagName =\n\
+{\n'
+
+DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY = '\
+\t$TagName,\n'
+
+
 DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
 {\n\
 '
@@ -37,7 +44,7 @@ DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
 \t\"$TagName\", \n\
 \t$NumOfChildParameters,\n\
 \t$NumOfChildObjects,\n\
-\tNULL,\n\
+\t$ChildObjects,\n\
 \t$ChildParas\n\
 };\n'
 
@@ -69,6 +76,25 @@ def writeFileLinesContent(FileObj, Content):
 	else:
 		print("File Obj invalid!!!")
 	
+def genTempDMChildObjs(pDmObj):
+	if pDmObj and pDmObj.childObjs:
+		numOfChildObjs = len(pDmObj.childObjs)		
+		ObjBufStr = Template(DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD)
+		restr = ObjBufStr.substitute(TagName = pDmObj.name.replace('.', '_')+'ChildObjs[]')
+		
+		print('restr=%s' % restr)
+		for id in range(numOfChildObjs):
+			ObjBufStr = Template(DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY)
+			rs = ObjBufStr.substitute(TagName = pDmObj.childObjs[id].tag.replace('.', '_'))
+			print('restr=%s' % rs)
+			restr += rs
+			
+		restr += '};\n'
+		
+		return restr
+	else:
+		return None
+
 def genTempDMParams(pDmObj):
 	if pDmObj and pDmObj.childParams:
 		numOfChildPara = len(pDmObj.childParams)		
@@ -91,11 +117,16 @@ def genTempDMParams(pDmObj):
 def genTempDMObj(pDmObj):
 	if pDmObj:		
 		ObjBufStr = Template(DMOBJ_TEMPLATE_STR)
+		ChildObjsRefTag = 'NULL'
 		ChildParamRefTag = 'NULL'
+		
 		if len(pDmObj.childParams) > 0:
-			ChildParamRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChidParams'
+			ChildParamRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildParams'
+		
+		if pDmObj.numOfChildObj > 0:
+			ChildObjsRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildObjs'
 			
-		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = ChildParamRefTag)
+		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildObjects = ChildObjsRefTag, ChildParas = ChildParamRefTag)
 		return restr
 	else:
 		return None
@@ -111,6 +142,7 @@ def getDMObject(_Obj_):
 	NumOfParas = 0
 	name = _Obj_.tag
 	ChildParamList = []
+	ChildObjList   = []
 	
 	for child in _Obj_:
 		if True == isParameter(child):
@@ -118,10 +150,13 @@ def getDMObject(_Obj_):
 			tmpParamObj = DMObj.cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
 			ChildParamList.append(tmpParamObj)
 			#print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
-	
+		else:			
+			ChildObjList.append(child)
+			print("=====ChildObjName:%s=====" % child.tag)
+			
 	#print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
 
-	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
+	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList, ChildObjList)
 	return tmpDMObj
 	
 	
@@ -132,7 +167,11 @@ def writeDMObjects(file_object, tmpRootObj):
 			strParas = genTempDMParams(tmpRootObj)
 			#print('%s'%strParas)
 			writeFileLinesContent(file_object, strParas)
-			
+		
+		if len(tmpRootObj.childObjs) > 0:
+			strChilds = genTempDMChildObjs(tmpRootObj)
+			writeFileLinesContent(file_object, strChilds)
+		
 		strbuf = genTempDMObj(tmpRootObj)
 
 		if strbuf:
@@ -169,8 +208,7 @@ if __name__=='__main__':
 	if not root:  # careful!
 		print("Error: Invalid xml file, root not found!\n")
 	
-	tmpRootObj = getDMObject(root)
-	writeDMObjects(file_object, tmpRootObj)
+	
 	
 	print("\nLoop all sub objects...\n")
 	
@@ -180,7 +218,10 @@ if __name__=='__main__':
 			fetchWriteChildObjects(child, file_object)
 		#else:
 		#	print('RootChildParaName=%s' % child.tag)
-			
+
+	tmpRootObj = getDMObject(root)
+	writeDMObjects(file_object, tmpRootObj)
+	
 	writeFileLinesContent(file_object, '\n/* +++++ Auto Gen codes end +++++ */\n\n')
 	file_object.close()		
 			
