@@ -6,6 +6,8 @@ from datetime import datetime
 from string import Template
 import DMObj
 
+DATA_MODEL_XML_FILE = 'data_model_tmp_Single.xml'
+
 #global definition for data model object elements
 PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList', 'style', 'defaultValue']
 XML_OBJ_TYPES = ['Object', 'MultiObject', 'Parameter', 'Instance']
@@ -18,12 +20,25 @@ AUTO_GEN_PROMPT_STR = '/*\n\
 ** Please Do not modify this file manually. \n\
 */\n'
 
+DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
+{\n\
+'
+
+DMOBJ_PARAMETER_TEMPLATE_STR_BODY = '\
+\t{\n\
+\t\t\'$TagName\', \n\
+\t\t$access,\n\
+\t\t$value_type,\n\
+\t\t$notification,\n\
+\t},\n'
+
 DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $TagName =\n\
 {\n\
 \t\'$TagName\', \n\
 \t$NumOfChildParameters,\n\
 \t$NumOfChildObjects,\n\
-\tNULL\n\
+\tNULL,\n\
+\t&$ChildParas\n\
 };\n'
 
 def isObject(x):
@@ -54,12 +69,29 @@ def writeFileLinesContent(FileObj, Content):
 	else:
 		print("File Obj invalid!!!")
 	
-
-def genTempDMObj(pDmObj):
-	if pDmObj:
-		bufStr = Template(DMOBJ_TEMPLATE_STR)
+def genTempDMParams(pDmObj):
+	if pDmObj and pDmObj.childParams:
+		numOfChildPara = len(pDmObj.childParams)		
+		ParaBufStr = Template(DMOBJ_PARAMETER_TEMPLATE_STR_HEAD)
+		restr = ParaBufStr.substitute(TagName = pDmObj.name+'_ChidParams[]')
 		
-		restr = bufStr.substitute(TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara)
+		#print('restr=%s' % restr)
+		for id in range(numOfChildPara):
+			ParaBufStr = Template(DMOBJ_PARAMETER_TEMPLATE_STR_BODY)
+			rs = ParaBufStr.substitute(TagName = pDmObj.childParams[id].name, access = pDmObj.childParams[id].access, value_type = pDmObj.childParams[id].type, notification = pDmObj.childParams[id].notification)
+			#print('restr=%s' % rs)
+			restr += rs
+			
+		restr += '};\n'
+		
+		return restr
+	else:
+		return None
+		
+def genTempDMObj(pDmObj):
+	if pDmObj:		
+		ObjBufStr = Template(DMOBJ_TEMPLATE_STR)
+		restr = ObjBufStr.substitute(TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildParas = pDmObj.name + '_ChidParams')
 		return restr
 	else:
 		return None
@@ -92,6 +124,13 @@ def getDMObject(_Obj_):
 	
 def writeDMObjects(file_object, tmpRootObj):
 	if tmpRootObj and file_object:
+		
+		#Write Obj parameters firstly 
+		if len(tmpRootObj.childParams) > 0:
+			strParas = genTempDMParams(tmpRootObj)
+			print('%s'%strParas)
+			writeFileLinesContent(file_object, strParas)
+			
 		strbuf = genTempDMObj(tmpRootObj)
 
 		if strbuf:
@@ -121,7 +160,7 @@ def fetchWriteChildObjects(Child, file_object):
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
 	
-	root = getRootXmlObject('data_model_tmp_Single.xml')
+	root = getRootXmlObject(DATA_MODEL_XML_FILE)
 	
 	file_object = open(DM_OBJ_HEAD_FILE, 'w+')
 	writeFileLinesContent(file_object, AUTO_GEN_PROMPT_STR)
@@ -133,14 +172,14 @@ if __name__=='__main__':
 	writeDMObjects(file_object, tmpRootObj)
 	
 	print("\nLoop all sub objects...\n")
-
+	
 	for child in root:	
 		if False == isParameter(child):
 			print('\nChildObjname=%s,numOfChild:%d' % (child.tag,len(child)))
 			fetchWriteChildObjects(child, file_object)
 		else:
 			print('RootChildParaName=%s' % child.tag)
-
+	
 	file_object.close()		
 			
 
