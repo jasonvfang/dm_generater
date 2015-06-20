@@ -117,12 +117,10 @@ def getDMObject(_Obj_):
 			NumOfParas += 1
 			tmpParamObj = DMObj.cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
 			ChildParamList.append(tmpParamObj)
-			print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
+			#print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 	
-	print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
-	#if len(ChildParamList) == 0:
-	#	ChildParamList = None
-	
+	#print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
+
 	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
 	return tmpDMObj
 	
@@ -147,7 +145,7 @@ def writeDMObjects(file_object, tmpRootObj):
 			
 			
 def fetchWriteChildObjects(Child, file_object):
-	if False == isParameter(Child):
+	if False == isParameter(Child) and len(Child):
 		tmpChildDMObj = getDMObject(Child)		
 		writeDMObjects(file_object, tmpChildDMObj)
 		
@@ -181,9 +179,10 @@ if __name__=='__main__':
 		if False == isParameter(child):
 			print('\nChildObjname=%s,numOfChild:%d' % (child.tag,len(child)))
 			fetchWriteChildObjects(child, file_object)
-		else:
-			print('RootChildParaName=%s' % child.tag)
-	
+		#else:
+		#	print('RootChildParaName=%s' % child.tag)
+			
+	writeFileLinesContent(file_object, '\n/* +++++ Auto Gen codes end +++++ */\n\n')
 	file_object.close()		
 			
 
