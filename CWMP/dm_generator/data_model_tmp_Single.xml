@@ -1,11 +1,10 @@
 <InternetGatewayDevice. type="Object" acsSpecial="" nextLevelNum="5">
-	 
 	<InternetGatewayDevice.DeviceSummary type="String" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-1024" acsSpecial="" defaultValue="" />
 	 
 	<InternetGatewayDevice.LANDeviceNumberOfEntries type="Unsigned" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" valueRange="0-65535" acsSpecial="" defaultValue="0" />
 	 
 	<InternetGatewayDevice.WANDeviceNumberOfEntries type="Unsigned" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" valueRange="0-65535" acsSpecial="" defaultValue="0" />
-	 
+	  
 	<InternetGatewayDevice.DeviceInfo. type="Object" acsSpecial="" nextLevelNum="18">
 	 
 		<InternetGatewayDevice.DeviceInfo.Description type="String" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-255" acsSpecial="" defaultValue="" />
@@ -44,6 +43,49 @@
 		 
 		<InternetGatewayDevice.DeviceInfo.VendorConfigFileNumberOfEntries type="Unsigned" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" valueRange="0-65535" acsSpecial="" defaultValue="0" />
 		 
-	</InternetGatewayDevice.DeviceInfo.>	 
+	</InternetGatewayDevice.DeviceInfo.>
+	
+	<InternetGatewayDevice.Layer3Forwarding. type="Object" acsSpecial="" nextLevelNum="3">
 	 
+		<InternetGatewayDevice.Layer3Forwarding.DefaultConnectionService type="String" access="readWrite" notification="active" needReboot="no" accessList="subscriber" style="status" lengthRange="0-255" acsSpecial="" defaultValue="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANIPConnection.1" />
+		 
+		<InternetGatewayDevice.Layer3Forwarding.ForwardNumberOfEntries type="Unsigned" access="readOnly" notification="active" needReboot="no" accessList="subscriber" style="configuration" valueRange="0-65535" acsSpecial="" defaultValue="0" />
+		 
+		<InternetGatewayDevice.Layer3Forwarding.Forwarding. type="MultiObject" acsSpecial="" nextLevelNum="1">
+		 
+			<InternetGatewayDevice.Layer3Forwarding.Forwarding.0. type="Instance" acsSpecial="" nextLevelNum="14" maxNumOfEntries="20">
+			 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.X_TEST_COM_Name type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-63" acsSpecial="" defaultValue="" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.Enable type="Bool" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" valueRange="0-1" acsSpecial="" defaultValue="1" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.Status type="String" access="readOnly" notification="none" needReboot="no" accessList="subscriber" style="status" lengthRange="0-64" acsSpecial="" defaultValue="Enabled" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.StaticRoute type="Bool" access="readOnly" notification="none" needReboot="no" accessList="subscriber" style="status" valueRange="0-1" acsSpecial="" defaultValue="1" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.Type type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-64" acsSpecial="" defaultValue="Host" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.DestIPAddress type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-15" acsSpecial="" defaultValue="0.0.0.0" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.DestSubnetMask type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-15" acsSpecial="" defaultValue="0.0.0.0" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.SourceIPAddress type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-15" acsSpecial="" defaultValue="0.0.0.0" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.SourceSubnetMask type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-15" acsSpecial="" defaultValue="0.0.0.0" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.ForwardingPolicy type="Int" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" valueRange="-1-2147483647" acsSpecial="" defaultValue="-1" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.GatewayIPAddress type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-15" acsSpecial="" defaultValue="" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.Interface type="String" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" lengthRange="0-255" acsSpecial="" defaultValue="" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.ForwardingMetric type="Int" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" valueRange="-1-2147483647" acsSpecial="" defaultValue="-1" />
+				 
+				<InternetGatewayDevice.Layer3Forwarding.Forwarding.0.MTU type="Int" access="readWrite" notification="none" needReboot="no" accessList="subscriber" style="configuration" valueRange="1-1540" acsSpecial="" defaultValue="1540" />
+				 
+			</InternetGatewayDevice.Layer3Forwarding.Forwarding.0.>
+			 
+		</InternetGatewayDevice.Layer3Forwarding.Forwarding.>
+		 
+	</InternetGatewayDevice.Layer3Forwarding.>
 </InternetGatewayDevice.>
