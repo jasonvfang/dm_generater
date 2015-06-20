@@ -152,7 +152,7 @@ def getDMObject(_Obj_):
 			#print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 		else:			
 			ChildObjList.append(child)
-			print("=====ChildObjName:%s=====" % child.tag)
+			#print("=====ChildObjName:%s=====" % child.tag)
 			
 	#print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
 
@@ -186,35 +186,34 @@ def writeDMObjects(file_object, tmpRootObj):
 def fetchWriteChildObjects(Child, file_object):
 	for subChild in Child:
 		if False == isParameter(subChild):	
-			print('\nChildObjname=%s,numOfChild:%d' % (subChild.tag,len(subChild)))
+			#print('\nChildObjname=%s,numOfChild:%d' % (subChild.tag,len(subChild)))
 			#tmpSubDMObj = getDMObject(subChild)
 			#writeDMObjects(file_object, tmpSubDMObj)
 			fetchWriteChildObjects(subChild, file_object)
-		else:
-			print('SubParaName=%s' % subChild.tag)
+		#else:
+			#print('SubParaName=%s' % subChild.tag)
 			
 	if False == isParameter(Child) and len(Child):
 		tmpChildDMObj = getDMObject(Child)		
 		writeDMObjects(file_object, tmpChildDMObj)	
 
 if __name__=='__main__':
-	print("Parse xml to generate codes...\n")
+	#print("Parse xml to generate codes...\n")
 	
 	root = getRootXmlObject(DATA_MODEL_XML_FILE)
 	
 	file_object = open(DM_OBJ_HEAD_FILE, 'w+')
 	writeFileLinesContent(file_object, AUTO_GEN_PROMPT_STR)
+	writeFileLinesContent(file_object, '#include "DmObj_Struct_def.h"')
 	
 	if not root:  # careful!
 		print("Error: Invalid xml file, root not found!\n")
 	
-	
-	
-	print("\nLoop all sub objects...\n")
+	#print("\nLoop all sub objects...\n")
 	
 	for child in root:	
 		if False == isParameter(child):
-			print('\nChildObjname=%s,numOfChild:%d' % (child.tag,len(child)))
+			#print('\nChildObjname=%s,numOfChild:%d' % (child.tag,len(child)))
 			fetchWriteChildObjects(child, file_object)
 		#else:
 		#	print('RootChildParaName=%s' % child.tag)
