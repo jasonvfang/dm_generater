@@ -145,19 +145,18 @@ def writeDMObjects(file_object, tmpRootObj):
 			
 			
 def fetchWriteChildObjects(Child, file_object):
-	if False == isParameter(Child) and len(Child):
-		tmpChildDMObj = getDMObject(Child)		
-		writeDMObjects(file_object, tmpChildDMObj)
-		
 	for subChild in Child:
 		if False == isParameter(subChild):	
 			print('\nChildObjname=%s,numOfChild:%d' % (subChild.tag,len(subChild)))
-			tmpSubDMObj = getDMObject(subChild)
-			writeDMObjects(file_object, tmpSubDMObj)
+			#tmpSubDMObj = getDMObject(subChild)
+			#writeDMObjects(file_object, tmpSubDMObj)
 			fetchWriteChildObjects(subChild, file_object)
 		else:
 			print('SubParaName=%s' % subChild.tag)
-	
+			
+	if False == isParameter(Child) and len(Child):
+		tmpChildDMObj = getDMObject(Child)		
+		writeDMObjects(file_object, tmpChildDMObj)	
 
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
