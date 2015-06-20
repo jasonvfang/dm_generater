@@ -4,7 +4,6 @@ import os, sys, string
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from string import Template
-import DMObj
 
 DATA_MODEL_XML_FILE = 'data_model_tmp_Single.xml'
 
@@ -48,6 +47,36 @@ DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
 \t$ChildParas\n\
 };\n'
 
+class cDMParas:
+	name           = ''
+	access         = ''
+	type           = ''
+	notification   = ''
+	
+	def __init__(self, name, access, notification, type):
+		self.name           = name
+		self.access         = access
+		self.notification   = notification
+		self.type           = type
+	
+	
+class cDMObj:
+	name           = ''
+	numOfChildObj  = 0
+	numOfChildPara = 0
+	type           = ''
+	childParams    = []
+	childObjs      = []
+	
+	def __init__(self, name, numOfChildObj, numOfChildPara, type, childParams, childObjs):
+		self.name           = name
+		self.numOfChildObj  = numOfChildObj
+		self.numOfChildPara = numOfChildPara
+		self.type           = type	
+		self.childParams	= childParams
+		self.childObjs		= childObjs
+		
+		
 def isObject(x):
 	if x.get('type') == 'Object':
 		return True
@@ -147,7 +176,7 @@ def getDMObject(_Obj_):
 	for child in _Obj_:
 		if True == isParameter(child):
 			NumOfParas += 1
-			tmpParamObj = DMObj.cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
+			tmpParamObj = cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
 			ChildParamList.append(tmpParamObj)
 			#print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 		else:			
@@ -156,7 +185,7 @@ def getDMObject(_Obj_):
 			
 	#print('\n####%s,len(ChildParamList)=%d'%(_Obj_.tag, len(ChildParamList)))
 
-	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList, ChildObjList)
+	tmpDMObj = cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList, ChildObjList)
 	return tmpDMObj
 	
 	
