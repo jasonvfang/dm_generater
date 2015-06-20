@@ -16,9 +16,9 @@ DM_OBJ_HEAD_FILE = 'DMObjStructHead.c'
 AUTO_GEN_PROMPT_STR = '/*\n\
 ** Auto generation file. \n\
 ** Please Do not modify this file manually. \n\
-*/\n\n'
+*/\n'
 
-DMOBJ_TEMPLATE_STR = 'DM_OBJ_S $TagName =\n\
+DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $TagName =\n\
 {\n\
 \t\'$TagName\', \n\
 \t$NumOfChildParameters,\n\
@@ -86,25 +86,10 @@ def getDMObject(_Obj_):
 	if len(ChildParamList) == 0:
 		ChildParamList = None
 	
-	rootObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
+	tmpDMObj = DMObj.cDMObj(name, NumOfChild, NumOfParas, 0, ChildParamList)
+	return tmpDMObj
 	
-	return rootObj
 	
-def getChildObjects(Child):
-	#print('subChildName=%s' % Child.tag, 'Type=%s' % Child.get('type'))
-	
-	for subChild in Child:
-		#print('objName=%s' % subChild.tag, 'Type=%s' % subChild.get('type'), 'isParameter=%s'%isParameter(subChild))
-		#print('items=%s\n' % subChild.items())
-		#print('keys=%s\n' % subChild.keys())
-		
-		if False == isParameter(subChild):	
-			print('\nChildObjname=%s,numOfChild:%d' % (subChild.tag,len(subChild)))
-			getChildObjects(subChild)
-		else:
-			print('SubParaName=%s' % subChild.tag)
-	
-
 def writeDMObjects(file_object, tmpRootObj):
 	if tmpRootObj and file_object:
 		strbuf = genTempDMObj(tmpRootObj)
@@ -115,9 +100,24 @@ def writeDMObjects(file_object, tmpRootObj):
 		else:
 			print('Root Gen failed, exit...')
 			file_object.close()	
-			sys.exit(1)
+			sys.exit(1)	
+			
+			
+def fetchWriteChildObjects(Child, file_object):
+	if False == isParameter(Child):
+		tmpChildDMObj = getDMObject(Child)		
+		writeDMObjects(file_object, tmpChildDMObj)
+		
+	for subChild in Child:
+		if False == isParameter(subChild):	
+			print('\nChildObjname=%s,numOfChild:%d' % (subChild.tag,len(subChild)))
+			tmpSubDMObj = getDMObject(subChild)
+			writeDMObjects(file_object, tmpSubDMObj)
+			fetchWriteChildObjects(subChild, file_object)
+		else:
+			print('SubParaName=%s' % subChild.tag)
 	
-	
+
 if __name__=='__main__':
 	print("Parse xml to generate codes...\n")
 	
@@ -137,11 +137,8 @@ if __name__=='__main__':
 	for child in root:	
 		if False == isParameter(child):
 			print('\nChildObjname=%s,numOfChild:%d' % (child.tag,len(child)))
-			#print('items=%s\n' % child.items())
-			#print('keys=%s\n' % child.keys())
-			getChildObjects(child)
+			fetchWriteChildObjects(child, file_object)
 		else:
-			#print('Sub parameters:')
 			print('RootChildParaName=%s' % child.tag)
 
 	file_object.close()		
