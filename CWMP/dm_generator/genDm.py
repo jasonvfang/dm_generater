@@ -230,8 +230,8 @@ def fetchWriteChildObjects(Child, file_object):
 
 def Usage():
 	print('Usage:')
-	print('\t./Parse_DM.py -h | --help')
-	print('\t./Parse_DM.py XXX.xml\n')
+	print('\t./genDm.py -h | --help')
+	print('\t./genDm.py XXX.xml\n')
 	
 	
 if __name__=='__main__':
