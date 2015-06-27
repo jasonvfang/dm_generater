@@ -12,6 +12,8 @@ ISOTIMEFORMAT='%Y/%m/%d %X'
 PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList', 'style', 'defaultValue']
 XML_OBJ_TYPES = ['Object', 'MultiObject', 'Parameter', 'Instance']
 VALUE_TYPES = ('Unsigned', 'dateTime', 'String', 'Int', 'Bool')
+VALUE_TYPE_DIC = {'Unsigned':'dUNSIGNED', 'dateTime':'dDATETIME', 'String':'dSTRING', 'Int':'dINT', 'Bool':'dBOOL', 'Unknow':'dUnknown'}
+NOTIFY_TYPE_DIC = {'none':'NOTIFY_NONE', 'active':'NOTIFY_ACTIVE', 'passive':'NOTIFY_PASSIVE'}
 OBJNAME_HEAD_TAG='IGD'
 DM_OBJ_HEAD_FILE = 'dm_objects_tb.c'
 
@@ -35,9 +37,15 @@ DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
 DMOBJ_PARAMETER_TEMPLATE_STR_BODY = '\
 \t{\n\
 \t\t\"$TagName\", \n\
-\t\t\"$access\",\n\
-\t\t\"$value_type\",\n\
-\t\t\"$notification\",\n\
+\t\t\"$accessList\", \n\
+\t\t$access,\n\
+\t\t$value_type,\n\
+\t\t$notification,\n\
+\t\tFALSE,\n\
+\t\t$needReboot,\n\
+\t\t$value,\n\
+\t\t$defaultValue,\n\
+\t\t"$valueRange",\n\
 \t},\n'
 
 DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
@@ -54,13 +62,25 @@ class cDMParas:
 	access         = ''
 	type           = ''
 	notification   = ''
+	accessList     = ''
+	#forcedInform   = ''
+	valueChanged   = 0
+	value          = ''
+	defaultValue   = ''
+	valueRange     = ''
+	needReboot     = ''
 	
-	def __init__(self, name, access, notification, type):
+	def __init__(self, name, access, notification, type, accessList, valueRange, defaultValue, needReboot):
 		self.name           = name
 		self.access         = access
 		self.notification   = notification
 		self.type           = type
-	
+		self.accessList		= accessList
+		self.needReboot	    = needReboot
+		self.valueChanged   = 0
+		self.value			= defaultValue
+		self.defaultValue   = defaultValue
+		self.valueRange		= valueRange
 	
 class cDMObj:
 	name           = ''
@@ -135,7 +155,27 @@ def genTempDMParams(pDmObj):
 		#print('restr=%s' % restr)
 		for id in range(numOfChildPara):
 			ParaBufStr = Template(DMOBJ_PARAMETER_TEMPLATE_STR_BODY)
-			rs = ParaBufStr.substitute(TagName = pDmObj.childParams[id].name, access = pDmObj.childParams[id].access, value_type = pDmObj.childParams[id].type, notification = pDmObj.childParams[id].notification)
+			rwType = 'READ_ONLY'
+			if pDmObj.childParams[id].access == 'readWrite':
+				rwType = 'READ_WRITE'
+			
+			dataType = 'dUnknown'
+			valustr = 0
+			if pDmObj.childParams[id].type in VALUE_TYPES:
+				dataType = VALUE_TYPE_DIC[pDmObj.childParams[id].type]
+				
+				if dataType == 'dSTRING' or dataType == 'dDATETIME':
+					valustr = '"' + pDmObj.childParams[id].value + '"'
+				else:
+					valustr = pDmObj.childParams[id].value
+					
+			notify_t = NOTIFY_TYPE_DIC[pDmObj.childParams[id].notification] 
+			
+			rebootFlag = 'FALSE'
+			if pDmObj.childParams[id].needReboot != 'no':
+				rebootFlag = 'TRUE'
+				
+			rs = ParaBufStr.substitute(TagName = pDmObj.childParams[id].name, accessList = pDmObj.childParams[id].accessList, access = rwType, value_type = dataType, notification = notify_t,value = valustr, defaultValue = valustr, needReboot = rebootFlag, valueRange = pDmObj.childParams[id].valueRange)
 			#print('restr=%s' % rs)
 			restr += rs
 			
@@ -178,7 +218,14 @@ def getDMObject(_Obj_):
 	for child in _Obj_:
 		if True == isParameter(child):
 			NumOfParas += 1
-			tmpParamObj = cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'))
+			tmp_value_range = ''
+			
+			if child.get('type') == 'String' or child.get('type') == 'DateTime':
+				tmp_value_range = child.get('lengthRange')
+			else:
+				tmp_value_range = child.get('valueRange')
+				
+			tmpParamObj = cDMParas(child.tag, child.get('access'), child.get('notification'), child.get('type'), child.get('accessList'), tmp_value_range, child.get('defaultValue'), child.get('needReboot'))
 			ChildParamList.append(tmpParamObj)
 			#print('ChildParamListName=%s' % ChildParamList[NumOfParas - 1].name, 'Type=%s' % child.get('type'), 'isObject=%s'%isObject(child))		
 		else:			
