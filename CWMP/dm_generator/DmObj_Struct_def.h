@@ -99,7 +99,7 @@ typedef struct _dm_obj_
 	char name[CWMP_NODE_NAME_LEN]; /* node name */
 	unsigned int NumOfChildParameters;
 	unsigned int NumOfChildObjects;
-	struct _dm_obj_ *ChildObjs;
+	struct _dm_obj_ **ChildObjs;
 	struct _dm_param_ *ChildParams;
 }DM_OBJ_S;
 
