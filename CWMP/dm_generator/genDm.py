@@ -165,7 +165,10 @@ def genTempDMParams(pDmObj):
 				dataType = VALUE_TYPE_DIC[pDmObj.childParams[id].type]
 				
 				if dataType == 'dSTRING' or dataType == 'dDATETIME':
-					valustr = '"' + pDmObj.childParams[id].value + '"'
+					if len(pDmObj.childParams[id].value) > 0:
+						valustr = '"' + pDmObj.childParams[id].value + '"'
+					else:
+						valustr = '(DM_PARAM_VALUE_U)' + '(' + '0' + ')'
 				else:
 					valustr = '(DM_PARAM_VALUE_U)' + '(' + pDmObj.childParams[id].value + ')'
 					
