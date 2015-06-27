@@ -7,6 +7,7 @@ from string import Template
 
 DATA_MODEL_XML_FILE = ''
 ISOTIMEFORMAT='%Y/%m/%d %X'
+TAB_SPACE = '    '
 
 #global definition for data model object elements
 PARAMETER_ATTRS = ['type', 'access', 'notification', 'needReboot', 'accessList', 'style', 'defaultValue']
@@ -27,7 +28,7 @@ DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD = '\n\nDM_OBJ_LIST $TagName =\n\
 {\n'
 
 DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY = '\
-\t&$TagName,\n'
+$TabS&$TagName,\n'
 
 
 DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
@@ -35,26 +36,26 @@ DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
 '
 
 DMOBJ_PARAMETER_TEMPLATE_STR_BODY = '\
-\t{\n\
-\t\t\"$TagName\", \n\
-\t\t\"$accessList\", \n\
-\t\t$access,\n\
-\t\t$value_type,\n\
-\t\t$notification,\n\
-\t\tFALSE,\n\
-\t\t$needReboot,\n\
-\t\t$value,\n\
-\t\t$defaultValue,\n\
-\t\t"$valueRange",\n\
-\t},\n'
+$TabS{\n\
+$TabS$TabS\"$TagName\", \n\
+$TabS$TabS\"$accessList\", \n\
+$TabS$TabS$access,\n\
+$TabS$TabS$value_type,\n\
+$TabS$TabS$notification,\n\
+$TabS$TabS$valueChanged,\n\
+$TabS$TabS$needReboot,\n\
+$TabS$TabS$value,\n\
+$TabS$TabS$defaultValue,\n\
+$TabS$TabS"$valueRange",\n\
+$TabS},\n'
 
 DMOBJ_TEMPLATE_STR = '\n\nDM_OBJ_S $ObjTagName =\n\
 {\n\
-\t\"$TagName\", \n\
-\t$NumOfChildParameters,\n\
-\t$NumOfChildObjects,\n\
-\t$ChildObjects,\n\
-\t$ChildParas\n\
+$TabS\"$TagName\", \n\
+$TabS$NumOfChildParameters,\n\
+$TabS$NumOfChildObjects,\n\
+$TabS$ChildObjects,\n\
+$TabS$ChildParas\n\
 };\n'
 
 class cDMParas:
@@ -136,7 +137,7 @@ def genTempDMChildObjs(pDmObj):
 		#print('restr=%s' % restr)
 		for id in range(numOfChildObjs):
 			ObjBufStr = Template(DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY)
-			rs = ObjBufStr.substitute(TagName = pDmObj.childObjs[id].tag.replace('.', '_'))
+			rs = ObjBufStr.substitute(TagName = pDmObj.childObjs[id].tag.replace('.', '_'), TabS = TAB_SPACE)
 			#print('restr=%s' % rs)
 			restr += rs
 			
@@ -178,7 +179,7 @@ def genTempDMParams(pDmObj):
 			if pDmObj.childParams[id].needReboot != 'no':
 				rebootFlag = 'TRUE'
 				
-			rs = ParaBufStr.substitute(TagName = pDmObj.childParams[id].name, accessList = pDmObj.childParams[id].accessList, access = rwType, value_type = dataType, notification = notify_t,value = valustr, defaultValue = valustr, needReboot = rebootFlag, valueRange = pDmObj.childParams[id].valueRange)
+			rs = ParaBufStr.substitute(TagName = pDmObj.childParams[id].name, TabS = TAB_SPACE, accessList = pDmObj.childParams[id].accessList, access = rwType, value_type = dataType, notification = notify_t,value = valustr, defaultValue = valustr, valueChanged = 'FALSE', needReboot = rebootFlag, valueRange = pDmObj.childParams[id].valueRange)
 			#print('restr=%s' % rs)
 			restr += rs
 			
@@ -200,7 +201,7 @@ def genTempDMObj(pDmObj):
 		if len(pDmObj.childObjs) > 0:
 			ChildObjsRefTag = pDmObj.name.replace('.', '_') + 'ChildObjs'
 			
-		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildObjects = ChildObjsRefTag, ChildParas = ChildParamRefTag)
+		restr = ObjBufStr.substitute(ObjTagName = pDmObj.name.replace('.', '_'), TabS = TAB_SPACE, TagName = pDmObj.name, NumOfChildParameters = pDmObj.numOfChildObj, NumOfChildObjects = pDmObj.numOfChildPara, ChildObjects = ChildObjsRefTag, ChildParas = ChildParamRefTag)
 		return restr
 	else:
 		return None
