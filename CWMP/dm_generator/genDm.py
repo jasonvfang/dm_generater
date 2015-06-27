@@ -167,7 +167,7 @@ def genTempDMParams(pDmObj):
 				if dataType == 'dSTRING' or dataType == 'dDATETIME':
 					valustr = '"' + pDmObj.childParams[id].value + '"'
 				else:
-					valustr = pDmObj.childParams[id].value
+					valustr = '(DM_PARAM_VALUE_U)' + '(' + pDmObj.childParams[id].value + ')'
 					
 			notify_t = NOTIFY_TYPE_DIC[pDmObj.childParams[id].notification] 
 			

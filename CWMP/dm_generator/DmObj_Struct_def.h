@@ -16,7 +16,7 @@
 #endif
 
 #ifndef BOOL
-typedef int BOOL;
+typedef unsigned char BOOL;
 #endif
 
 #ifndef DM_UINT32
@@ -55,9 +55,9 @@ typedef enum _notify_type_e
 typedef union
 {
 	char *value;
-	int ival;
-	int boolval;
-	unsigned int uval;
+	BOOL boolval;
+	DM_SINT32 ival;
+	DM_UINT32 uval;
 }DM_PARAM_VALUE_U;
 
 typedef struct _range_s
@@ -81,26 +81,26 @@ typedef struct _range_s
 
 typedef struct _dm_param_
 {
-	char               name[CWMP_NODE_NAME_LEN]; /* parameter name */
-	char               accessList[CWMP_ACCESSLIST_STR_LEN];/* accessList name */
-	ACCESS_TYPE_E      access;       /* read or write */
-	DATA_TYPE_E        value_type;   /* value type */
-	NOTIFICATION_E     notification; /* notification type */
-	BOOL               valueChanged; /* value changed or not */
+    char               name[CWMP_NODE_NAME_LEN]; /* parameter name */
+    char               accessList[CWMP_ACCESSLIST_STR_LEN];/* accessList name */
+    ACCESS_TYPE_E      access;       /* read or write */
+    DATA_TYPE_E        value_type;   /* value type */
+    NOTIFICATION_E     notification; /* notification type */
+    BOOL               valueChanged; /* value changed or not */
     BOOL               needReboot;   /* value changed need reboot */
-	DM_PARAM_VALUE_U   value;        /* value content */
-	DM_PARAM_VALUE_U   defvalue;     /* default value */
+    DM_PARAM_VALUE_U   value;        /* value content */
+    DM_PARAM_VALUE_U   defvalue;     /* default value */
     char               valueRangeStr[CWMP_COMMON_STR_LEN];/* value ranges string */
 }DM_PARAMETER_S;
 
 
 typedef struct _dm_obj_
 {
-	char name[CWMP_NODE_NAME_LEN]; /* node name */
-	unsigned int NumOfChildParameters;
-	unsigned int NumOfChildObjects;
-	struct _dm_obj_ **ChildObjs;
-	struct _dm_param_ *ChildParams;
+    char name[CWMP_NODE_NAME_LEN]; /* node name */
+    unsigned int NumOfChildParameters;
+    unsigned int NumOfChildObjects;
+    struct _dm_obj_ **ChildObjs;
+    struct _dm_param_ *ChildParams;
 }DM_OBJ_S;
 
 
