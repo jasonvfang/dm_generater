@@ -23,11 +23,11 @@ AUTO_GEN_PROMPT_STR = '/*\n\
 *** Gen @$TIME_NOW\n\
 */\n'
 
-DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD = '\n\nDM_OBJ_S $TagName =\n\
+DMOBJ_CHILD_OBJS_TEMPLATE_STR_HEAD = '\n\nDM_OBJ_LIST $TagName =\n\
 {\n'
 
 DMOBJ_CHILD_OBJS_TEMPLATE_STR_BODY = '\
-\t$TagName,\n'
+\t&$TagName,\n'
 
 
 DMOBJ_PARAMETER_TEMPLATE_STR_HEAD = '\n\nDM_PARAMETER_S $TagName =\n\
@@ -192,7 +192,7 @@ def genTempDMObj(pDmObj):
 		ChildParamRefTag = 'NULL'
 		
 		if len(pDmObj.childParams) > 0:
-			ChildParamRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildParams'
+			ChildParamRefTag = pDmObj.name.replace('.', '_') + 'ChildParams'
 		
 		if len(pDmObj.childObjs) > 0:
 			ChildObjsRefTag = '&' + pDmObj.name.replace('.', '_') + 'ChildObjs'

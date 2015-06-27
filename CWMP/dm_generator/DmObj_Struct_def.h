@@ -93,6 +93,7 @@ typedef struct _dm_param_
     char               valueRangeStr[CWMP_COMMON_STR_LEN];/* value ranges string */
 }DM_PARAMETER_S;
 
+
 typedef struct _dm_obj_
 {
 	char name[CWMP_NODE_NAME_LEN]; /* node name */
@@ -101,6 +102,9 @@ typedef struct _dm_obj_
 	struct _dm_obj_ *ChildObjs;
 	struct _dm_param_ *ChildParams;
 }DM_OBJ_S;
+
+
+typedef DM_OBJ_S* DM_OBJ_LIST;
 
 #endif /* _DMOBJ_STRUCT_H_ */
 
