@@ -1,0 +1,14 @@
+1. 预先分配内容方法
+多实例结点预先分配内容空间
+在DM_OBJLIST中将其内容先写好
+
+DM_OBJ_LIST InternetGatewayDevice_Layer3Forwarding_Forwarding_ChildObjs[] =
+{
+    &InternetGatewayDevice_Layer3Forwarding_Forwarding_1_,
+	&InternetGatewayDevice_Layer3Forwarding_Forwarding_2_,
+	&InternetGatewayDevice_Layer3Forwarding_Forwarding_3_,
+};
+
+当然，在XML中要根据Multiobject类型及Instance类型进行区分
+
+处理简单，但比较占内存空间
